@@ -31,7 +31,7 @@
      <number>0</number>
     </property>
     <item row="0" column="0">
-     <widget class="QPlainTextEdit" name="plainTextEdit">
+     <widget class="QPlainTextEdit" name="edit_view">
       <property name="lineWrapMode">
        <enum>QPlainTextEdit::NoWrap</enum>
       </property>

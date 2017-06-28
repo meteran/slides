@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QApplication
 from src.main_window import MainWindow
 
 if __name__ == '__main__':
+    UI.resources.qInitResources()
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
