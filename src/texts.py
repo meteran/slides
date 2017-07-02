@@ -16,6 +16,15 @@ class Text:
         return self[self._current_index]
 
     @property
+    def path(self):
+        return self._path
+
+    @path.setter
+    def path(self, path):
+        self._path = path
+        self._current_index = 0
+
+    @property
     def next(self):
         if self._current_index+1 == len(self._pages):
             raise StopIteration()

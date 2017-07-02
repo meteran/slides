@@ -69,5 +69,6 @@ class MainWindow(QMainWindow):
         path = str(self.file_model.filePath(model))
         if os.path.isfile(path) and path.endswith('.sld'):
             with open(path, 'r') as fp:
+                self.text.path = path
                 self.edit_view.setPlainText(fp.read())
 
