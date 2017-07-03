@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
-import os
 
 from PyQt5.QtCore import QDir
-from PyQt5.QtCore import QModelIndex
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QDockWidget
 from PyQt5.QtWidgets import QFileSystemModel
@@ -14,7 +12,7 @@ from PyQt5.QtWidgets import QTreeView
 from PyQt5.uic import loadUi
 
 from src.screen import Screen
-from src.texts import Text
+from src.texts import Text, PersistenceManager
 
 
 class MainWindow(QMainWindow):
@@ -31,6 +29,9 @@ class MainWindow(QMainWindow):
         self.action_dir = QAction()
         self.action_playlist = QAction()
         self.menu_window = QMenu()
+        self.action_save = QAction()
+        self.action_save_as = QAction()
+        self.action_new = QAction()
 
         loadUi('UI/slides.ui', self)
 
@@ -55,7 +56,18 @@ class MainWindow(QMainWindow):
         self.screen = Screen(parent=self)
 
         self.text = Text()
+        self.persistence_manager = PersistenceManager(self, self.edit_view, self.text)
+
+        # SIGNALS
+        self.action_new.triggered.connect(self.persistence_manager.new)
+        self.action_save.triggered.connect(self.persistence_manager.save)
+        self.action_save_as.triggered.connect(self.persistence_manager.save_as)
+
         self.edit_view.textChanged.connect(lambda: self.text.update(self.edit_view.toPlainText()))
+        self.edit_view.textChanged.connect(lambda: self.action_save.setEnabled(True))
+
+        self.directory_view.doubleClicked.connect(
+            lambda model: self.persistence_manager.open(str(self.file_model.filePath(model))))
 
         # TESTS
 
@@ -63,12 +75,6 @@ class MainWindow(QMainWindow):
         # self.screen.show()
         # self.screen.set_content('tekst piosenki')
 
-        self.directory_view.doubleClicked.connect(self.open_file)
-
-    def open_file(self, model: QModelIndex):
-        path = str(self.file_model.filePath(model))
-        if os.path.isfile(path) and path.endswith('.sld'):
-            with open(path, 'r') as fp:
-                self.edit_view.setPlainText(fp.read())
-            self.text.path = path
-
+    @property
+    def text_changed(self):
+        return self.action_save.isEnabled()
