@@ -6,6 +6,8 @@ import re
 from PyQt5.QtCore import QObject
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QPushButton
 
 
 class Text(QObject):
@@ -90,6 +92,7 @@ class PersistenceManager:
         if path:
             with open(path, 'w') as fp:
                 fp.write(self._text.text)
+            self._parent.action_save.setDisabled(True)
 
     def save_as(self):
         path = self.new_path()
@@ -98,10 +101,19 @@ class PersistenceManager:
             self.save()
 
     def new(self):
-        # TODO check if unsaved changes
-        self._path = None
-        self._parent.edit_view.setPlainText('')
-        self._parent.action_save.setDisabled(True)
+        override = True
+        if self._parent.action_save.isEnabled():
+            dialog = QMessageBox(self._parent)
+            dialog.setText('Czy chcesz usunąć niezapisane zmiany?')
+            dialog.setWindowTitle('Alert')
+            dialog.addButton(QPushButton('Tak'), QMessageBox.YesRole)
+            dialog.addButton(QPushButton('Anuluj'), QMessageBox.NoRole)
+            override = dialog.exec_() == 0
+
+        if override:
+            self._path = None
+            self._parent.edit_view.setPlainText('')
+            self._parent.action_save.setDisabled(True)
 
     def open(self, path):
         if os.path.isfile(path) and path.endswith('.sld'):
