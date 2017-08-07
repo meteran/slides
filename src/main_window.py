@@ -55,8 +55,9 @@ class MainWindow(QMainWindow):
 
         self.screen = Screen(parent=self)
 
-        self.text = Text()
+        self.text = Text(self)
         self.persistence_manager = PersistenceManager(self, self.edit_view, self.text)
+        # self.text.text_changed.connect(self.update)
 
         # SIGNALS
         self.action_new.triggered.connect(self.persistence_manager.new)
@@ -71,10 +72,13 @@ class MainWindow(QMainWindow):
 
         # TESTS
 
-
         # self.screen.show()
         # self.screen.set_content('tekst piosenki')
 
     @property
     def text_changed(self):
         return self.action_save.isEnabled()
+
+    def update(self):
+        print('updateing')
+        self.preview_dock.update()

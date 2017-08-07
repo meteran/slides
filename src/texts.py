@@ -3,11 +3,17 @@
 import os
 import re
 
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtCore import QObject
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QFileDialog
 
 
-class Text:
-    def __init__(self):
+class Text(QObject):
+    text_changed = pyqtSignal()
+
+    def __init__(self, parent):
+        super().__init__(parent)
+        self._parent = parent
         self._current_index = 0
 
     def __getitem__(self, item):
@@ -52,6 +58,10 @@ class Text:
     def text(self, text):
         self._text = text
         self._pages = re.split('---+', self._text)
+        if self._current_index >= len(self._pages):
+            self._current_index = len(self._pages) - 1
+        print(text)
+        self.text_changed.emit()
 
     def update(self, text):
         self.text = text
@@ -60,27 +70,43 @@ class Text:
 # TODO here should be path to file
 class PersistenceManager:
     def __init__(self, parent, edit_view, text: Text):
-        self.edit_view = edit_view
-        self.parent = parent
-        self.text = text
+        self._edit_view = edit_view
+        self._parent = parent
+        self._text = text
         self._path = None
+
+    def new_path(self):
+        path, etx = QFileDialog.getSaveFileName(parent=self._parent, filter='*.sld')
+        return path
+
+    @property
+    def path(self):
+        if not self._path:
+            self._path = self.new_path()
+        return self._path
 
     def save(self):
-        if self._path:
-            with open(self._path, 'w') as fp:
-                fp.write(self.text.text)
+        path = self.path
+        if path:
+            with open(path, 'w') as fp:
+                fp.write(self._text.text)
 
     def save_as(self):
-        print('saving as')
+        path = self.new_path()
+        if path:
+            self._path = path
+            self.save()
 
     def new(self):
+        # TODO check if unsaved changes
         self._path = None
-        self.parent.edit_view.setPlainText('')
-        self.parent.action_save.setDisabled(True)
+        self._parent.edit_view.setPlainText('')
+        self._parent.action_save.setDisabled(True)
 
     def open(self, path):
         if os.path.isfile(path) and path.endswith('.sld'):
             with open(path, 'r') as fp:
-                self.edit_view.setPlainText(fp.read())
-            self.text.path = path
-        self.parent.action_save.setDisabled(True)
+                t = fp.read()
+                self._edit_view.setPlainText(t)
+        self._parent.action_save.setDisabled(True)
+        self._path = path
