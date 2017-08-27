@@ -307,7 +307,7 @@
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/images/images/next.png</normaloff>:/images/images/next.png</iconset>
+     <normaloff>:/images/images/save.png</normaloff>:/images/images/save.png</iconset>
    </property>
    <property name="text">
     <string>Zapisz</string>
@@ -316,7 +316,7 @@
   <action name="action_save_as">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/images/images/next_song.png</normaloff>:/images/images/next_song.png</iconset>
+     <normaloff>:/images/images/save_as.png</normaloff>:/images/images/save_as.png</iconset>
    </property>
    <property name="text">
     <string>Zapisz jako</string>
@@ -325,7 +325,7 @@
   <action name="action_new">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/images/images/start.png</normaloff>:/images/images/start.png</iconset>
+     <normaloff>:/images/images/new.png</normaloff>:/images/images/new.png</iconset>
    </property>
    <property name="text">
     <string>Nowy</string>
