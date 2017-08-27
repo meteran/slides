@@ -1,5 +1,8 @@
 <RCC>
   <qresource prefix="images">
+    <file>images/new.png</file>
+    <file>images/save.png</file>
+    <file>images/save_as.png</file>
     <file>images/next.png</file>
     <file>images/next_song.png</file>
     <file>images/prev.png</file>
